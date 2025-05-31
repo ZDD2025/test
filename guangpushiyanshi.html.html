@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光照调控任务卡 - 药用植物成分优化设计</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a5298, #4a8cbf);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .task-card {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #2c7744, #5aaf70);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .decoration {
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0.1;
+            font-size: 10rem;
+        }
+        
+        .module {
+            padding: 25px 30px;
+            border-bottom: 2px dashed #e0e0e0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .module:last-child {
+            border-bottom: none;
+        }
+        
+        .module-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .module-number {
+            background: #2c7744;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .module-title {
+            font-size: 1.8rem;
+            color: #2c7744;
+            font-weight: 600;
+        }
+        
+        .time-badge {
+            background: #ff9800;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+        
+        .content-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #5aaf70;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        
+        .task-instruction {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #444;
+        }
+        
+        .highlight {
+            background: #e8f5e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #2c7744;
+        }
+        
+        .interactive-area {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .spectrum {
+            height: 100px;
+            background: linear-gradient(90deg, #9d50bb, #6e48aa, #4776e6, #2c9cf2, #1eaecc, #1bc8a0, #a1de58, #f9f047, #ff8c00, #ff0080);
+            border-radius: 8px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .wavelength-label {
+            position: absolute;
+            bottom: 5px;
+            font-size: 0.8rem;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.7);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        .light-btn {
+            background: #5aaf70;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(90, 175, 112, 0.3);
+        }
+        
+        .light-btn:hover {
+            background: #2c7744;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(90, 175, 112, 0.4);
+        }
+        
+        .light-btn.purple {
+            background: #6e48aa;
+            box-shadow: 0 4px 10px rgba(110, 72, 170, 0.3);
+        }
+        
+        .light-btn.purple:hover {
+            background: #4a2c7e;
+            box-shadow: 0 6px 15px rgba(110, 72, 170, 0.4);
+        }
+        
+        .light-btn.red {
+            background: #e74c3c;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+        
+        .light-btn.red:hover {
+            background: #c0392b;
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .result-display {
+            background: #e3f2fd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 500px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed #64b5f6;
+            transition: all 0.5s ease;
+        }
+        
+        .result-display.active {
+            background: #bbdefb;
+            border: 2px solid #2196f3;
+        }
+        
+        .result-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1565c0;
+            text-align: center;
+            margin: 10px 0;
+        }
+        
+        .training-section {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #2c7744;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .question {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        
+        .question p {
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .option {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+        
+        .option:hover {
+            background: #e0f7fa;
+            border-color: #26c6da;
+        }
+        
+        .option.selected {
+            background: #b2ebf2;
+            border-color: #00bcd4;
+            font-weight: bold;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        input {
+            padding: 10px 15px;
+            border: 2px solid #5aaf70;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 150px;
+        }
+        
+        .submit-btn {
+            background: #ff9800;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #f57c00;
+            transform: scale(1.05);
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .footer p {
+            margin: 5px 0;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .module-title {
+                font-size: 1.4rem;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="task-card">
+        <div class="header">
+            <h1><i class="fas fa-lightbulb"></i> 光照调控任务卡</h1>
+            <p>药用植物成分优化设计 - 扫描二维码开启探索之旅</p>
+            <div class="decoration">
+                <i class="fas fa-seedling"></i>
+            </div>
+        </div>
+        
+        <!-- 模块一：光质解码 -->
+        <div class="module">
+            <div class="module-header">
+                <div class="module-number">1</div>
+                <h2 class="module-title">光质解码：虚拟实验破解成分密码</h2>
+                <div class="time-badge">12分钟</div>
+            </div>
+            
+            <div class="content-box">
+                <p class="task-instruction">
+                    "光不仅是能量，更是'信号灯'！通过<strong class="highlight">虚拟光谱实验室</strong>，我们将探索不同光质对药用植物的影响。
+                </p>
+            </div>
+            
+            <div class="interactive-area">
+                <h3><i class="fas fa-vial"></i> 光谱实验室</h3>
+                <p>拖动不同波段的光到植物上，观察反应：</p>
+                
+                <div class="spectrum">
+                    <span class="wavelength-label" style="left: 5%;">UV</span>
+                    <span class="wavelength-label" style="left: 20%;">蓝紫光</span>
+                    <span class="wavelength-label" style="left: 40%;">绿光</span>
+                    <span class="wavelength-label" style="left: 60%;">红橙光</span>
+                    <span class="wavelength-label" style="left: 85%;">红外光</span>
+                </div>
+                
+                <div class="controls">
+                    <button class="light-btn purple" id="blue-light-btn">
+                        <i class="fas fa-sun"></i> 蓝紫光 (430nm)
+                    </button>
+                    <button class="light-btn red" id="red-light-btn">
+                        <i class="fas fa-sun"></i> 红光 (660nm)
+                    </button>
+                </div>
+                
+                <div class="result-display" id="result-display">
+                    <p>请选择一种光质照射植物...</p>
+                </div>
+                
+                <div class="training-section">
+                    <h3 class="section-title"><i class="fas fa-question-circle"></i> 训练题</h3>
+                    
+                    <div class="question">
+                        <p>1. 高山药材品质好的关键原因是（ ）</p>
+                        <div class="options">
+                            <div class="option">A. 长波红外光多</div>
+                            <div class="option">B. 短波紫外线多</div>
+                            <div class="option">C. 绿光比例高</div>
+                            <div class="option">D. 光照时间长</div>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p>2. 填空：红光促进______合成，蓝紫光促进______合成（从"糖类/蛋白质/生物碱"选填）</p>
+                        <div class="input-group">
+                            <input type="text" placeholder="红光作用">
+                            <input type="text" placeholder="蓝紫光作用">
+                            <button class="submit-btn">提交</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 模块二：光强博弈 -->
+        <div class="module">
+            <div class="module-header">
+                <div class="module-number">2</div>
+                <h2 class="module-title">光强博弈：辩证制定遮荫策略</h2>
+                <div class="time-badge">15分钟</div>
+            </div>
+            
+            <div class="content-box">
+                <p class="task-instruction">
+                    "光照调节不能'一刀切'！请分析案例，运用辩证思维制定最佳策略。
+                </p>
+            </div>
+            
+            <div class="interactive-area">
+                <h3><i class="fas fa-balance-scale"></i> 辩证决策厅</h3>
+                
+                <div class="question">
+                    <p><strong>案例1：黄芪</strong> - 遮荫提高黄酮含量，但会降低多糖含量。如何取舍？</p>
+                    <div class="options">
+                        <div class="option">A. 优先保障黄酮（药典要求高）</div>
+                        <div class="option">B. 优先保障多糖（市场需求大）</div>
+                        <div class="option">C. 折中方案（各保障一定水平）</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>案例2：穿心莲</strong> - 强光降低内酯，却提升脱水内酯（市场价：120元/g vs 80元/g）。如何选择？</p>
+                    <div class="options">
+                        <div class="option">A. 全光照（增加脱水内酯）</div>
+                        <div class="option">B. 遮荫50%（平衡两者）</div>
+                        <div class="option">C. 遮荫70%（增加内酯）</div>
+                    </div>
+                </div>
+                
+                <div class="question">
+                    <p><strong>案例3：北细辛</strong> - 50%遮荫时挥发油最高，但遮荫成本每天增加200元。若增产挥发油价值500元/月，至少需遮荫多少天才盈利？</p>
+                    <div class="input-group">
+                        <input type="number" placeholder="天数">
+                        <button class="submit-btn">计算</button>
+                    </div>
+                </div>
+                
+                <div class="training-section">
+                    <h3 class="section-title"><i class="fas fa-lightbulb"></i> 关键发现</h3>
+                    <p>"正如中医讲究'三因制宜'，我们决策时也需<span class="highlight">因地制宜</span>（地域光强）、<span class="highlight">因药制宜</span>（成分价值）、<span class="highlight">因时制宜</span>（季节变化）——这就是中国农耕智慧！"</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 模块三：AI设计 -->
+        <div class="module">
+            <div class="module-header">
+                <div class="module-number">3</div>
+                <h2 class="module-title">创新应用：AI设计"光配方"</h2>
+                <div class="time-badge">10分钟</div>
+            </div>
+            
+            <div class="content-box">
+                <p class="task-instruction">
+                    "现在解锁终极武器——'智慧光配方AI'！输入参数，生成最佳光照方案。
+                </p>
+            </div>
+            
+            <div class="interactive-area">
+                <h3><i class="fas fa-robot"></i> 智慧农场AI系统</h3>
+                
+                <div class="input-group" style="justify-content: center; margin: 20px 0;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 500px;">
+                        <div>
+                            <label>目标药材：</label>
+                            <select style="padding: 10px; border-radius: 8px; width: 100%;">
+                                <option>丹参</option>
+                                <option>黄芪</option>
+                                <option>穿心莲</option>
+                                <option>北细辛</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label>目标成分：</label>
+                            <select style="padding: 10px; border-radius: 8px; width: 100%;">
+                                <option>酚酸B</option>
+                                <option>黄酮</option>
+                                <option>生物碱</option>
+                                <option>挥发油</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label>产地海拔：</label>
+                            <input type="text" value="云南 (2000m)" style="width: 100%;">
+                        </div>
+                        
+                        <div>
+                            <label>成本限制：</label>
+                            <input type="text" value="<3000元/亩" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="light-btn" style="margin: 20px auto;">
+                    <i class="fas fa-cogs"></i> 生成AI光配方
+                </button>
+                
+                <div class="result-display" style="min-height: 150px; justify-content: center;">
+                    <div style="text-align: center;">
+                        <h3>推荐方案</h3>
+                        <p class="result-text">蓝紫光补光30% + 遮荫率40%</p>
+                        <p>预测：酚酸B↑28% | 成本：¥2850 | 评分：★★★★☆</p>
+                    </div>
+                </div>
+                
+                <div class="training-section">
+                    <h3 class="section-title"><i class="fas fa-tasks"></i> 学生实战</h3>
+                    <p>"请为任务卡中的药农设计方案，提交后AI实时评分！"</p>
+                    <button class="light-btn" style="margin-top: 15px;">
+                        <i class="fas fa-laptop"></i> 打开平板设计方案
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p><i class="fas fa-graduation-cap"></i> 药用植物光照调控学习系统</p>
+            <p>优秀方案将被推荐到校扶贫项目实践</p>
+            <p>© 2023 农业科技学院 | 中药资源系</p>
+        </div>
+    </div>
+
+    <script>
+        // 模块一交互逻辑
+        document.getElementById('blue-light-btn').addEventListener('click', function() {
+            const display = document.getElementById('result-display');
+            display.innerHTML = `
+                <p><i class="fas fa-leaf" style="color:#6e48aa; font-size:2rem;"></i></p>
+                <p class="result-text">酚酸B ↑30%</p>
+                <p>蓝紫光激活酚酸合成！</p>
+            `;
+            display.classList.add('active');
+        });
+        
+        document.getElementById('red-light-btn').addEventListener('click', function() {
+            const display = document.getElementById('result-display');
+            display.innerHTML = `
+                <p><i class="fas fa-seedling" style="color:#e74c3c; font-size:2rem;"></i></p>
+                <p class="result-text">生物碱 ↑25%</p>
+                <p>红光促进生物碱积累！</p>
+            `;
+            display.classList.add('active');
+        });
+        
+        // 为选项添加交互效果
+        document.querySelectorAll('.option').forEach(option => {
+            option.addEventListener('click', function() {
+                // 移除同组其他选项的选中状态
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // 选中当前选项
+                this.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>
